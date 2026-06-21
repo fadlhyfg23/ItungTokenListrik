@@ -1,269 +1,303 @@
-
-<h2 class="sr-only">Kalkulator token listrik PLN — hitung kWh dari nominal token berdasarkan golongan dan tarif resmi Triwulan II 2026</h2>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Token Listrik PLN</title>
 <style>
-  .calc-wrap{padding:1rem 0;font-family:var(--font-sans)}
-  .section-label{font-size:12px;color:var(--color-text-secondary);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
-  .golongan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:1.5rem}
-  .gol-btn{padding:10px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;text-align:left;transition:all .15s;font-size:12px;color:var(--color-text-secondary);line-height:1.35}
-  .gol-btn.active{border-color:#1D9E75;background:#E1F5EE;color:#085041}
-  .gol-btn:hover:not(.active){background:var(--color-background-secondary)}
-  .gol-name{font-weight:500;font-size:13px;color:var(--color-text-primary);display:block;margin-bottom:2px}
-  .gol-btn.active .gol-name{color:#085041}
-  .nominal-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:1rem}
-  .nom-btn{padding:10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;font-size:14px;font-weight:500;color:var(--color-text-primary);transition:all .15s}
-  .nom-btn.active{border-color:#378ADD;background:#E6F1FB;color:#0C447C}
-  .nom-btn:hover:not(.active){background:var(--color-background-secondary)}
-  .custom-row{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem}
-  .custom-row span{font-size:14px;color:var(--color-text-secondary);white-space:nowrap}
-  .custom-row input{flex:1;padding:9px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:14px}
-  .result-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
-  .result-kwh{font-size:36px;font-weight:500;color:var(--color-text-primary);line-height:1;margin-bottom:4px}
-  .result-kwh span{font-size:16px;font-weight:400;color:var(--color-text-secondary);margin-left:4px}
-  .result-detail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:1rem}
-  .detail-item{background:var(--color-background-primary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary)}
-  .detail-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
-  .detail-val{font-size:15px;font-weight:500;color:var(--color-text-primary)}
-  .formula-box{font-size:12px;color:var(--color-text-secondary);border-left:2px solid var(--color-border-secondary);padding:8px 12px;margin-bottom:1.5rem;line-height:1.7;background:var(--color-background-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0}
-  .formula-box strong{color:var(--color-text-primary)}
-  .alat-section{margin-top:1.5rem}
-  .alat-add-row{display:flex;gap:8px;margin-bottom:1rem}
-  .alat-add-row input{flex:1;padding:8px 10px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
-  .alat-add-row select{padding:8px 10px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
-  .btn-add{padding:8px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;font-size:13px;font-weight:500;color:var(--color-text-primary);white-space:nowrap}
-  .btn-add:hover{background:var(--color-background-secondary)}
-  .alat-list{display:flex;flex-direction:column;gap:6px}
-  .alat-item{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;padding:10px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)}
-  .alat-info{font-size:13px}
-  .alat-name{font-weight:500;color:var(--color-text-primary)}
-  .alat-sub{color:var(--color-text-secondary);font-size:11px;margin-top:1px}
-  .alat-kwh{font-size:13px;font-weight:500;color:#185FA5;white-space:nowrap}
-  .btn-del{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);padding:2px 4px;font-size:16px;line-height:1}
-  .btn-del:hover{color:#A32D2D}
-  .total-alat{margin-top:12px;padding:12px;background:#E6F1FB;border-radius:var(--border-radius-md);display:flex;justify-content:space-between;align-items:center}
-  .total-alat .label{font-size:13px;color:#185FA5}
-  .total-alat .val{font-size:16px;font-weight:500;color:#0C447C}
-  .sisa-bar-wrap{margin-top:12px}
-  .sisa-label{display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
-  .bar-bg{height:8px;background:var(--color-background-secondary);border-radius:99px;overflow:hidden}
-  .bar-fill{height:8px;background:#1D9E75;border-radius:99px;transition:width .3s}
-  .bar-fill.warn{background:#EF9F27}
-  .bar-fill.danger{background:#E24B4A}
-  .sisa-val{margin-top:6px;font-size:13px;color:var(--color-text-secondary);text-align:right}
-  .divider{height:0.5px;background:var(--color-border-tertiary);margin:1.5rem 0}
-  .ppj-note{font-size:11px;color:var(--color-text-secondary);margin-top:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh;padding:1rem}
+.wrap{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:1rem}
+h1{font-size:17px;font-weight:600;color:#1a1a1a;padding:1rem 1.1rem .5rem}
+.card{background:#fff;border-radius:14px;border:1px solid #e8e8e4;overflow:hidden}
+.card-head{padding:.85rem 1.1rem .5rem;font-size:11px;font-weight:600;color:#888;letter-spacing:.06em;text-transform:uppercase}
+.card-body{padding:.5rem 1.1rem 1.1rem}
+
+/* Golongan grid */
+.gol-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.gbtn{padding:9px 10px;border:1px solid #e5e5e0;border-radius:10px;background:#fafaf8;cursor:pointer;text-align:left;font-size:11px;color:#666;line-height:1.4;transition:all .12s}
+.gbtn:hover{background:#f0f0ec;border-color:#ccc}
+.gbtn.on{border-color:#1a8a5a;background:#edf7f1;color:#0d5c3a}
+.gname{display:block;font-weight:600;font-size:12px;color:#1a1a1a;margin-bottom:1px}
+.gbtn.on .gname{color:#0d5c3a}
+.gsub{color:#2aa06a;font-size:10px}
+
+/* Nominal */
+.nom-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px}
+.nbtn{padding:10px;border:1px solid #e5e5e0;border-radius:10px;background:#fafaf8;cursor:pointer;font-size:13px;font-weight:600;color:#1a1a1a;transition:all .12s}
+.nbtn:hover{background:#f0f0ec}
+.nbtn.on{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
+.cust-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+.cust-row span{font-size:12px;color:#888;white-space:nowrap}
+.cust-row input{flex:1;padding:8px 10px;border:1px solid #e5e5e0;border-radius:8px;background:#fafaf8;color:#1a1a1a;font-size:13px}
+.cust-row input:focus{outline:none;border-color:#2563eb}
+
+/* Result */
+.res-kwh{font-size:38px;font-weight:600;color:#1a1a1a;line-height:1;margin-bottom:2px}
+.res-kwh small{font-size:15px;font-weight:400;color:#888;margin-left:4px}
+.res-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px}
+.ritem{padding:9px 11px;background:#f7f7f5;border-radius:8px}
+.rl{font-size:10px;color:#888;margin-bottom:2px}
+.rv{font-size:14px;font-weight:600;color:#1a1a1a}
+.formula{font-size:11px;color:#888;background:#f7f7f5;border-left:2px solid #ccc;padding:7px 10px;border-radius:0 8px 8px 0;line-height:1.7;margin-top:10px}
+.formula strong{color:#1a1a1a}
+.note{font-size:10px;color:#aaa;margin-top:8px}
+
+/* Alat */
+.add-row{display:grid;grid-template-columns:1fr 58px 58px 36px;gap:5px;margin-bottom:10px}
+.add-row input{padding:8px 8px;font-size:12px;border:1px solid #e5e5e0;border-radius:8px;background:#fafaf8;color:#1a1a1a;width:100%}
+.add-row input:focus{outline:none;border-color:#2563eb}
+.add-row input::placeholder{color:#bbb}
+.addbtn{padding:8px;border:1px solid #ccc;border-radius:8px;background:#fafaf8;cursor:pointer;font-size:18px;line-height:1;text-align:center;color:#444}
+.addbtn:hover{background:#f0f0ec}
+.alat-list{display:flex;flex-direction:column;gap:5px}
+.aitem{background:#fafaf8;border:1px solid #eee;border-radius:10px;overflow:hidden}
+.aitem-top{display:grid;grid-template-columns:1fr auto auto;align-items:start;gap:6px;padding:9px 10px}
+.aname{font-weight:600;font-size:12px;color:#1a1a1a}
+.asub{color:#888;font-size:10px;margin-top:1px}
+.akwh{font-size:11px;font-weight:600;color:#1d4ed8;text-align:right;line-height:1.5;white-space:nowrap}
+.delbtn{background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;line-height:1;padding:1px 3px}
+.delbtn:hover{color:#dc2626}
+.aitem-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #eee}
+.astat{padding:7px 8px;text-align:center;border-right:1px solid #eee}
+.astat:last-child{border-right:none}
+.astat-l{font-size:9px;color:#999;margin-bottom:2px;text-transform:uppercase;letter-spacing:.03em}
+.astat-v{font-size:12px;font-weight:600;color:#1a1a1a}
+.empty{padding:16px;text-align:center;color:#bbb;font-size:12px;border:1px dashed #e5e5e0;border-radius:10px}
+
+/* Summary */
+.sum-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}
+.scard{padding:10px 11px;border-radius:10px;border:1px solid #e5e5e0;background:#fafaf8}
+.scard.blue{background:#eff6ff;border-color:#bfdbfe}
+.scard.green{background:#edf7f1;border-color:#bbf7d0}
+.scard.amber{background:#fffbeb;border-color:#fde68a}
+.sl{font-size:10px;color:#888;margin-bottom:3px}
+.scard.blue .sl{color:#1d4ed8}
+.scard.green .sl{color:#15803d}
+.scard.amber .sl{color:#92400e}
+.sv{font-size:18px;font-weight:600;color:#1a1a1a}
+.scard.blue .sv{color:#1e40af}
+.scard.green .sv{color:#166534}
+.scard.amber .sv{color:#78350f}
+.ss{font-size:10px;color:#888;margin-top:1px}
+
+/* Bar */
+.bar-wrap{margin-top:4px}
+.bar-top{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:5px}
+.bar-bg{height:8px;background:#f0f0ec;border-radius:99px;overflow:hidden}
+.bar-f{height:8px;background:#2aa06a;border-radius:99px;transition:width .4s}
+.bar-f.warn{background:#f59e0b}
+.bar-f.danger{background:#ef4444}
+.bar-bot{font-size:11px;color:#888;text-align:right;margin-top:4px}
+
+.insight{margin-top:10px;padding:10px 12px;background:#f7f7f5;border-radius:8px;font-size:12px;color:#666;line-height:1.7}
+.insight strong{color:#1a1a1a}
+
+.divider{height:1px;background:#f0f0ec;margin:.5rem 0}
 </style>
+</head>
+<body>
+<div class="wrap">
 
-<div class="calc-wrap">
-
-  <div class="section-label">Golongan tarif</div>
-  <div class="golongan-grid" id="golGrid"></div>
-
-  <div class="section-label">Nominal token (Rp)</div>
-  <div class="nominal-row">
-    <button class="nom-btn active" onclick="setNominal(20000,this)">Rp 20.000</button>
-    <button class="nom-btn" onclick="setNominal(50000,this)">Rp 50.000</button>
-    <button class="nom-btn" onclick="setNominal(100000,this)">Rp 100.000</button>
-    <button class="nom-btn" onclick="setNominal(200000,this)">Rp 200.000</button>
+<div class="card">
+  <div class="card-head">Golongan tarif listrik</div>
+  <div class="card-body">
+    <div class="gol-grid" id="gg"></div>
   </div>
-  <div class="custom-row">
-    <span>Nominal lain:</span>
-    <input type="number" id="customNominal" placeholder="Contoh: 150000" min="1" oninput="onCustomInput()">
-  </div>
+</div>
 
-  <div class="result-card">
-    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:6px">Estimasi kWh diperoleh</div>
-    <div class="result-kwh" id="resultKwh">— <span>kWh</span></div>
-    <div class="result-detail">
-      <div class="detail-item">
-        <div class="detail-label">Tarif/kWh</div>
-        <div class="detail-val" id="detTarif">—</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">PPJ Jakarta (2.4%)</div>
-        <div class="detail-val" id="detPpj">—</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">Nominal bersih</div>
-        <div class="detail-val" id="detBersih">—</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">Golongan</div>
-        <div class="detail-val" id="detGol" style="font-size:12px">—</div>
-      </div>
+<div class="card">
+  <div class="card-head">Nominal token</div>
+  <div class="card-body">
+    <div class="nom-grid">
+      <button class="nbtn on" onclick="setN(20000,this)">Rp 20.000</button>
+      <button class="nbtn" onclick="setN(50000,this)">Rp 50.000</button>
+      <button class="nbtn" onclick="setN(100000,this)">Rp 100.000</button>
+      <button class="nbtn" onclick="setN(200000,this)">Rp 200.000</button>
     </div>
-    <div class="ppj-note">* PPJ daerah lain berbeda. Jakarta = 2.4% dari nominal token.</div>
-  </div>
-
-  <div class="formula-box" id="formulaBox">Pilih golongan dan nominal untuk lihat formula.</div>
-
-  <div class="divider"></div>
-
-  <div class="section-label">Simulasi alat elektronik</div>
-  <div class="alat-add-row">
-    <input type="text" id="alatNama" placeholder="Nama alat (misal: Kulkas)">
-    <input type="number" id="alatWatt" placeholder="Watt" min="1" style="width:70px;flex:none">
-    <input type="number" id="alatJam" placeholder="Jam/hr" min="0.1" step="0.1" style="width:65px;flex:none">
-    <button class="btn-add" onclick="tambahAlat()">+ Tambah</button>
-  </div>
-  <div id="alatList" class="alat-list"></div>
-  <div id="totalAlatWrap" style="display:none">
-    <div class="total-alat">
-      <span class="label">Total konsumsi/hari</span>
-      <span class="val" id="totalKwhHari">— kWh</span>
-    </div>
-    <div class="sisa-bar-wrap">
-      <div class="sisa-label">
-        <span>Pemakaian dari token ini</span>
-        <span id="sisaHari">— hari</span>
-      </div>
-      <div class="bar-bg"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
-      <div class="sisa-val" id="sisaKwhVal"></div>
+    <div class="cust-row">
+      <span>Nominal lain:</span>
+      <input type="number" id="cn" placeholder="cth: 150000" min="1" oninput="onCN()">
     </div>
   </div>
 </div>
 
+<div class="card">
+  <div class="card-head">Hasil kalkulasi</div>
+  <div class="card-body">
+    <div class="res-kwh" id="rk">—<small>kWh</small></div>
+    <div class="res-grid">
+      <div class="ritem"><div class="rl">Tarif/kWh</div><div class="rv" id="dt">—</div></div>
+      <div class="ritem"><div class="rl">PPJ Jakarta (2.4%)</div><div class="rv" id="dp">—</div></div>
+      <div class="ritem"><div class="rl">Nominal bersih</div><div class="rv" id="db">—</div></div>
+      <div class="ritem"><div class="rl">Golongan</div><div class="rv" id="dg" style="font-size:11px">—</div></div>
+    </div>
+    <div class="formula" id="fb">Pilih golongan dan nominal untuk lihat formula.</div>
+    <div class="note">* PPJ berbeda tiap daerah. Jakarta = 2.4% dari nominal token.</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">Simulasi alat elektronik</div>
+  <div class="card-body">
+    <div class="add-row">
+      <input type="text" id="aNm" placeholder="Nama alat (cth: Kulkas)">
+      <input type="number" id="aWt" placeholder="Watt" min="1">
+      <input type="number" id="aJm" placeholder="Jam/hr" min="0.1" step="0.1">
+      <button class="addbtn" onclick="addA()" title="Tambah alat">+</button>
+    </div>
+    <div id="al"><div class="empty">Belum ada alat. Tambahkan di atas.</div></div>
+  </div>
+</div>
+
+<div class="card" id="sw" style="display:none">
+  <div class="card-head">Ringkasan konsumsi</div>
+  <div class="card-body">
+    <div class="sum-grid">
+      <div class="scard blue"><div class="sl">Total harian</div><div class="sv" id="sh">—</div><div class="ss" id="shr">—</div></div>
+      <div class="scard green"><div class="sl">Total bulanan (30 hr)</div><div class="sv" id="sb">—</div><div class="ss" id="sbr">—</div></div>
+      <div class="scard amber"><div class="sl">Token/bulan dibutuhkan</div><div class="sv" id="stb">—</div><div class="ss" id="stbs">—</div></div>
+      <div class="scard"><div class="sl">Daya puncak (semua nyala)</div><div class="sv" id="sw2">— W</div><div class="ss">total watt terpasang</div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-top"><span>Satu token cukup untuk</span><span id="bh" style="font-weight:600">— hari</span></div>
+      <div class="bar-bg"><div class="bar-f" id="bf" style="width:0%"></div></div>
+      <div class="bar-bot" id="bs"></div>
+    </div>
+    <div class="insight" id="tn"></div>
+  </div>
+</div>
+
+</div>
+
 <script>
-const GOLONGAN = [
-  {id:'r1-900', nama:'R-1 / 900 VA', tarif:1352, subsidi:true},
-  {id:'r1-1300', nama:'R-1 / 1.300 VA', tarif:1445, subsidi:false},
-  {id:'r1-2200', nama:'R-1 / 2.200 VA', tarif:1445, subsidi:false},
-  {id:'r2', nama:'R-2 / 3.500–5.500 VA', tarif:1700, subsidi:false},
-  {id:'r3', nama:'R-3 / 6.600 VA+', tarif:1700, subsidi:false},
-  {id:'b2', nama:'B-2 / 6.600VA–200kVA', tarif:1445, subsidi:false},
-  {id:'b3', nama:'B-3 / TM >200kVA', tarif:1122, subsidi:false},
-  {id:'i3', nama:'I-3 / TM >200kVA', tarif:1122, subsidi:false},
-  {id:'i4', nama:'I-4 / TT 30.000kVA+', tarif:997, subsidi:false},
-  {id:'p1', nama:'P-1 / 6.600VA–200kVA', tarif:1700, subsidi:false},
-  {id:'p2', nama:'P-2 / TM >200kVA', tarif:1533, subsidi:false},
-  {id:'p3', nama:'P-3 / PJU TR', tarif:1700, subsidi:false},
-  {id:'l', nama:'L / TR,TM,TT', tarif:1645, subsidi:false},
+const GOL=[
+  {id:'r1-900',n:'R-1 / 900 VA',t:1352,s:true},
+  {id:'r1-1300',n:'R-1 / 1.300 VA',t:1445},
+  {id:'r1-2200',n:'R-1 / 2.200 VA',t:1445},
+  {id:'r2',n:'R-2 / 3.500–5.500 VA',t:1700},
+  {id:'r3',n:'R-3 / 6.600 VA+',t:1700},
+  {id:'b2',n:'B-2 / 6.600VA–200kVA',t:1445},
+  {id:'b3',n:'B-3 / TM >200kVA',t:1122},
+  {id:'i3',n:'I-3 / TM >200kVA',t:1122},
+  {id:'i4',n:'I-4 / TT 30.000kVA+',t:997},
+  {id:'p1',n:'P-1 / 6.600VA–200kVA',t:1700},
+  {id:'p2',n:'P-2 / TM >200kVA',t:1533},
+  {id:'p3',n:'P-3 / PJU TR',t:1700},
+  {id:'l',n:'L / TR,TM,TT',t:1645},
 ];
-const PPJ_RATE = 0.024;
-let selGol = null;
-let nominal = 20000;
-let alatList = [];
+const PPJ=0.024;
+let sg=null,nom=20000,alat=[];
+const f=n=>Math.round(n).toLocaleString('id-ID');
+const fr=n=>'Rp '+f(n);
+const fk=n=>n>=100000?'Rp '+(n/1000).toFixed(0)+'rb':fr(n);
+const kwht=()=>sg&&nom>0?(nom*(1-PPJ))/sg.t:0;
 
-function fmt(n){return n.toLocaleString('id-ID')}
-function fmtRp(n){return 'Rp '+fmt(Math.round(n))}
-
-const grid = document.getElementById('golGrid');
-GOLONGAN.forEach(g=>{
-  const btn = document.createElement('button');
-  btn.className='gol-btn';
-  btn.innerHTML=`<span class="gol-name">${g.nama}</span>Rp ${fmt(g.tarif)}/kWh${g.subsidi?' · <span style="color:#1D9E75;font-size:11px">subsidi</span>':''}`;
-  btn.onclick=()=>selectGol(g, btn);
-  btn.dataset.id=g.id;
-  grid.appendChild(btn);
+const gg=document.getElementById('gg');
+GOL.forEach(g=>{
+  const b=document.createElement('button');
+  b.className='gbtn';
+  b.innerHTML=`<span class="gname">${g.n}</span>Rp ${f(g.t)}/kWh${g.s?' <span class="gsub">· subsidi</span>':''}`;
+  b.onclick=()=>{sg=g;document.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');calc();};
+  gg.appendChild(b);
 });
 
-function selectGol(g, btn){
-  selGol=g;
-  document.querySelectorAll('.gol-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  hitung();
+function setN(n,btn){
+  nom=n;
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('cn').value='';
+  calc();
+}
+function onCN(){
+  const v=parseInt(document.getElementById('cn').value)||0;
+  if(v>0){nom=v;document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on'));calc();}
 }
 
-function setNominal(n, btn){
-  nominal=n;
-  document.querySelectorAll('.nom-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('customNominal').value='';
-  hitung();
+function calc(){
+  if(!sg||nom<=0)return;
+  const ppj=nom*PPJ,br=nom-ppj,kw=br/sg.t;
+  document.getElementById('rk').innerHTML=kw.toFixed(2)+'<small>kWh</small>';
+  document.getElementById('dt').textContent='Rp '+f(sg.t);
+  document.getElementById('dp').textContent=fr(ppj);
+  document.getElementById('db').textContent=fr(br);
+  document.getElementById('dg').textContent=sg.n;
+  document.getElementById('fb').innerHTML=`<strong>Formula:</strong> (${fr(nom)} − ${fr(ppj)} PPJ) ÷ Rp ${f(sg.t)} = <strong>${kw.toFixed(2)} kWh</strong>`;
+  renderSum();
 }
 
-function onCustomInput(){
-  const v=parseInt(document.getElementById('customNominal').value)||0;
-  if(v>0){
-    nominal=v;
-    document.querySelectorAll('.nom-btn').forEach(b=>b.classList.remove('active'));
-    hitung();
+function addA(){
+  const nm=document.getElementById('aNm').value.trim();
+  const wt=parseFloat(document.getElementById('aWt').value)||0;
+  const jm=parseFloat(document.getElementById('aJm').value)||0;
+  if(!nm||wt<=0||jm<=0)return;
+  alat.push({id:Date.now(),nm,wt,jm});
+  document.getElementById('aNm').value='';
+  document.getElementById('aWt').value='';
+  document.getElementById('aJm').value='';
+  render();
+}
+function delA(id){alat=alat.filter(a=>a.id!==id);render();}
+
+function render(){
+  const wrap=document.getElementById('al');
+  if(!alat.length){
+    wrap.innerHTML='<div class="empty">Belum ada alat. Tambahkan di atas.</div>';
+    document.getElementById('sw').style.display='none';
+    return;
   }
-}
-
-function hitung(){
-  if(!selGol||nominal<=0){return;}
-  const ppj=nominal*PPJ_RATE;
-  const bersih=nominal-ppj;
-  const kwh=bersih/selGol.tarif;
-  document.getElementById('resultKwh').innerHTML=kwh.toFixed(2)+'<span>kWh</span>';
-  document.getElementById('detTarif').textContent='Rp '+fmt(selGol.tarif);
-  document.getElementById('detPpj').textContent=fmtRp(ppj);
-  document.getElementById('detBersih').textContent=fmtRp(bersih);
-  document.getElementById('detGol').textContent=selGol.nama;
-  document.getElementById('formulaBox').innerHTML=
-    `<strong>Formula:</strong> (${fmtRp(nominal)} − ${fmtRp(ppj)} PPJ) ÷ Rp ${fmt(selGol.tarif)} = <strong>${kwh.toFixed(2)} kWh</strong>`;
-  updateSisa(kwh);
-}
-
-function tambahAlat(){
-  const nama=document.getElementById('alatNama').value.trim();
-  const watt=parseFloat(document.getElementById('alatWatt').value)||0;
-  const jam=parseFloat(document.getElementById('alatJam').value)||0;
-  if(!nama||watt<=0||jam<=0)return;
-  alatList.push({id:Date.now(), nama, watt, jam});
-  document.getElementById('alatNama').value='';
-  document.getElementById('alatWatt').value='';
-  document.getElementById('alatJam').value='';
-  renderAlat();
-}
-
-function hapusAlat(id){
-  alatList=alatList.filter(a=>a.id!==id);
-  renderAlat();
-}
-
-function renderAlat(){
-  const wrap=document.getElementById('alatList');
   wrap.innerHTML='';
-  let totalKwh=0;
-  alatList.forEach(a=>{
-    const kwh=a.watt/1000*a.jam;
-    totalKwh+=kwh;
-    const item=document.createElement('div');
-    item.className='alat-item';
-    item.innerHTML=`<div class="alat-info"><div class="alat-name">${a.nama}</div><div class="alat-sub">${a.watt}W × ${a.jam} jam/hari</div></div><div class="alat-kwh">${kwh.toFixed(3)} kWh/hr</div><button class="btn-del" onclick="hapusAlat(${a.id})" aria-label="Hapus"><i class="ti ti-x" aria-hidden="true"></i></button>`;
-    wrap.appendChild(item);
+  alat.forEach(a=>{
+    const kh=a.wt/1000*a.jm,kb=kh*30;
+    const rb=sg?kb*sg.t:0;
+    const el=document.createElement('div');
+    el.className='aitem';
+    el.innerHTML=`
+      <div class="aitem-top">
+        <div><div class="aname">${a.nm}</div><div class="asub">${a.wt}W × ${a.jm} jam/hari</div></div>
+        <div class="akwh">${kh.toFixed(3)} kWh/hr<br>${kb.toFixed(2)} kWh/bln</div>
+        <button class="delbtn" onclick="delA(${a.id})" title="Hapus">×</button>
+      </div>
+      <div class="aitem-stats">
+        <div class="astat"><div class="astat-l">kWh/hari</div><div class="astat-v">${kh.toFixed(3)}</div></div>
+        <div class="astat"><div class="astat-l">kWh/bulan</div><div class="astat-v">${kb.toFixed(2)}</div></div>
+        <div class="astat"><div class="astat-l">Biaya/bulan</div><div class="astat-v">${sg?fk(rb):'—'}</div></div>
+      </div>`;
+    wrap.appendChild(el);
   });
-  const twrap=document.getElementById('totalAlatWrap');
-  if(alatList.length>0){
-    twrap.style.display='block';
-    document.getElementById('totalKwhHari').textContent=totalKwh.toFixed(3)+' kWh/hari';
-    const kwhToken = getKwhToken();
-    if(kwhToken>0&&totalKwh>0){
-      const hari=kwhToken/totalKwh;
-      document.getElementById('sisaHari').textContent=hari.toFixed(1)+' hari';
-      const pct=Math.min(100,(totalKwh/kwhToken)*100);
-      const bar=document.getElementById('barFill');
-      bar.style.width=pct+'%';
-      bar.className='bar-fill'+(pct>80?' danger':pct>50?' warn':'');
-      document.getElementById('sisaKwhVal').textContent=`Token ${fmt(nominal)} → cukup ${hari.toFixed(1)} hari dengan pola pemakaian ini`;
-    } else {
-      document.getElementById('sisaHari').textContent='Pilih token dulu';
-      document.getElementById('sisaKwhVal').textContent='';
-    }
+  renderSum();
+}
+
+function renderSum(){
+  if(!alat.length)return;
+  document.getElementById('sw').style.display='block';
+  let tw=0,tkh=0;
+  alat.forEach(a=>{tw+=a.wt;tkh+=a.wt/1000*a.jm;});
+  const tkb=tkh*30,kt=kwht(),tr=sg?sg.t:0;
+  document.getElementById('sh').textContent=tkh.toFixed(3)+' kWh';
+  document.getElementById('shr').textContent=tr?fr(tr*tkh)+'/hari':'Pilih golongan';
+  document.getElementById('sb').textContent=tkb.toFixed(2)+' kWh';
+  document.getElementById('sbr').textContent=tr?fr(tr*tkb)+'/bulan':'—';
+  document.getElementById('sw2').textContent=f(tw)+' W';
+  if(kt>0&&tkb>0){
+    const perBulan=tkb/kt,biayaBulan=perBulan*nom,hari=kt/tkh;
+    document.getElementById('stb').textContent=perBulan.toFixed(1)+'× token';
+    document.getElementById('stbs').textContent=fr(biayaBulan)+'/bulan';
+    document.getElementById('bh').textContent=hari.toFixed(1)+' hari';
+    const bf=document.getElementById('bf');
+    bf.style.width=Math.min(100,(1/hari*30)*100)+'%';
+    bf.className='bar-f'+(hari<10?' danger':hari<20?' warn':'');
+    document.getElementById('bs').textContent=`Token Rp ${f(nom)} → habis dalam ${hari.toFixed(1)} hari`;
+    const tbn=Math.ceil(perBulan);
+    document.getElementById('tn').innerHTML=`Dengan pola ini, butuh <strong>${tbn}× token Rp ${f(nom)}</strong> per bulan — setara <strong>${fr(tbn*nom)}/bulan</strong> atau rata-rata <strong>${fr(Math.round(tbn*nom/30))}/hari</strong>.`;
   } else {
-    twrap.style.display='none';
+    document.getElementById('stb').textContent='—';
+    document.getElementById('stbs').textContent='Pilih golongan & nominal';
+    document.getElementById('tn').textContent='Pilih golongan tarif dan nominal token untuk lihat estimasi bulanan.';
   }
 }
 
-function getKwhToken(){
-  if(!selGol||nominal<=0)return 0;
-  return (nominal*(1-PPJ_RATE))/selGol.tarif;
-}
-
-function updateSisa(kwh){
-  let totalKwh=0;
-  alatList.forEach(a=>totalKwh+=a.watt/1000*a.jam);
-  if(alatList.length>0&&totalKwh>0){
-    const hari=kwh/totalKwh;
-    document.getElementById('sisaHari').textContent=hari.toFixed(1)+' hari';
-    const pct=Math.min(100,(totalKwh/kwh)*100);
-    const bar=document.getElementById('barFill');
-    bar.style.width=pct+'%';
-    bar.className='bar-fill'+(pct>80?' danger':pct>50?' warn':'');
-    document.getElementById('sisaKwhVal').textContent=`Token ${fmt(nominal)} → cukup ${hari.toFixed(1)} hari`;
-  }
-}
-
-document.querySelector('.gol-btn').click();
+document.querySelector('.gbtn').click();
 </script>
+</body>
+</html>
