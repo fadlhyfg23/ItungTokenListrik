@@ -3,111 +3,197 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kalkulator Token Listrik PLN</title>
+<title>Kalkulator Token Listrik</title>
 <style>
+/* TEMA NORMAL (DEFAULT) */
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh;padding:1rem}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh;padding:1rem;transition:background 0.3s,color 0.3s}
 .wrap{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:1rem}
-h1{font-size:17px;font-weight:600;color:#1a1a1a;padding:1rem 1.1rem .5rem}
-.card{background:#fff;border-radius:14px;border:1px solid #e8e8e4;overflow:hidden}
-.card-head{padding:.85rem 1.1rem .5rem;font-size:11px;font-weight:600;color:#888;letter-spacing:.06em;text-transform:uppercase}
+
+/* Header & Toggle Button */
+.header-wrap{display:flex;justify-content:space-between;align-items:center;padding:1rem 0 .5rem 0}
+h1{font-size:17px;font-weight:600;color:#1a1a1a;transition:color 0.3s}
+.theme-btn{padding:6px 12px;border-radius:20px;border:1px solid #d1d5db;background:#fff;color:#4b5563;font-size:11px;cursor:pointer;font-weight:600;transition:all 0.3s;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+.theme-btn:hover{background:#f3f4f6}
+
+.card{background:#fff;border-radius:14px;border:1px solid #e8e8e4;overflow:hidden;transition:all 0.3s}
+.card-head{padding:.85rem 1.1rem .5rem;font-size:11px;font-weight:600;color:#888;letter-spacing:.06em;text-transform:uppercase;transition:color 0.3s}
 .card-body{padding:.5rem 1.1rem 1.1rem}
 
 /* Golongan grid */
 .gol-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-.gbtn{padding:9px 10px;border:1px solid #e5e5e0;border-radius:10px;background:#fafaf8;cursor:pointer;text-align:left;font-size:11px;color:#666;line-height:1.4;transition:all .12s}
+.gbtn{padding:9px 10px;border:1px solid #e5e5e0;border-radius:10px;background:#fafaf8;cursor:pointer;text-align:left;font-size:11px;color:#666;line-height:1.4;transition:all .2s}
 .gbtn:hover{background:#f0f0ec;border-color:#ccc}
 .gbtn.on{border-color:#1a8a5a;background:#edf7f1;color:#0d5c3a}
-.gname{display:block;font-weight:600;font-size:12px;color:#1a1a1a;margin-bottom:1px}
+.gname{display:block;font-weight:600;font-size:12px;color:#1a1a1a;margin-bottom:1px;transition:color 0.3s}
 .gbtn.on .gname{color:#0d5c3a}
 .gsub{color:#2aa06a;font-size:10px}
 
-/* Nominal */
+/* Nominal & Select */
 .nom-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px}
-.nbtn{padding:10px;border:1px solid #e5e5e0;border-radius:10px;background:#fafaf8;cursor:pointer;font-size:13px;font-weight:600;color:#1a1a1a;transition:all .12s}
+.nbtn{padding:10px;border:1px solid #e5e5e0;border-radius:10px;background:#fafaf8;cursor:pointer;font-size:13px;font-weight:600;color:#1a1a1a;transition:all .2s}
 .nbtn:hover{background:#f0f0ec}
 .nbtn.on{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
-.cust-row{display:flex;align-items:center;gap:8px;margin-top:4px}
-.cust-row span{font-size:12px;color:#888;white-space:nowrap}
-.cust-row input{flex:1;padding:8px 10px;border:1px solid #e5e5e0;border-radius:8px;background:#fafaf8;color:#1a1a1a;font-size:13px}
-.cust-row input:focus{outline:none;border-color:#2563eb}
+.cust-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.cust-row span{font-size:12px;color:#888;white-space:nowrap;min-width:70px;transition:color 0.3s}
+.cust-row input, .cust-row select{flex:1;padding:8px 10px;border:1px solid #e5e5e0;border-radius:8px;background:#fafaf8;color:#1a1a1a;font-size:13px;transition:all 0.3s}
+.cust-row input:focus, .cust-row select:focus{outline:none;border-color:#2563eb;background:#fff}
 
 /* Result */
-.res-kwh{font-size:38px;font-weight:600;color:#1a1a1a;line-height:1;margin-bottom:2px}
-.res-kwh small{font-size:15px;font-weight:400;color:#888;margin-left:4px}
+.res-kwh{font-size:38px;font-weight:600;color:#1a1a1a;line-height:1;margin-bottom:2px;transition:color 0.3s}
+.res-kwh small{font-size:15px;font-weight:400;color:#888;margin-left:4px;transition:color 0.3s}
 .res-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px}
-.ritem{padding:9px 11px;background:#f7f7f5;border-radius:8px}
-.rl{font-size:10px;color:#888;margin-bottom:2px}
-.rv{font-size:14px;font-weight:600;color:#1a1a1a}
-.formula{font-size:11px;color:#888;background:#f7f7f5;border-left:2px solid #ccc;padding:7px 10px;border-radius:0 8px 8px 0;line-height:1.7;margin-top:10px}
-.formula strong{color:#1a1a1a}
-.note{font-size:10px;color:#aaa;margin-top:8px}
+.ritem{padding:9px 11px;background:#f7f7f5;border-radius:8px;transition:background 0.3s}
+.rl{font-size:10px;color:#888;margin-bottom:2px;transition:color 0.3s}
+.rv{font-size:14px;font-weight:600;color:#1a1a1a;transition:color 0.3s}
 
-/* Alat */
-.add-row{display:grid;grid-template-columns:1fr 58px 58px 36px;gap:5px;margin-bottom:10px}
-.add-row input{padding:8px 8px;font-size:12px;border:1px solid #e5e5e0;border-radius:8px;background:#fafaf8;color:#1a1a1a;width:100%}
-.add-row input:focus{outline:none;border-color:#2563eb}
-.add-row input::placeholder{color:#bbb}
-.addbtn{padding:8px;border:1px solid #ccc;border-radius:8px;background:#fafaf8;cursor:pointer;font-size:18px;line-height:1;text-align:center;color:#444}
+/* Alat & Form Dinamis */
+.alat-inputs { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.alat-inputs input, .alat-inputs select { padding: 8px; font-size: 12px; border: 1px solid #e5e5e0; border-radius: 8px; background: #fafaf8; color: #1a1a1a; width: 100%; outline: none; transition:all 0.3s; }
+.alat-inputs input:focus, .alat-inputs select:focus { border-color: #2563eb; background:#fff; }
+.alat-inputs-bot { display: grid; grid-template-columns: 75px 1fr 50px 36px; gap: 5px; }
+.addbtn{padding:8px;border:1px solid #ccc;border-radius:8px;background:#fafaf8;cursor:pointer;font-size:18px;line-height:1;text-align:center;color:#444;transition:all 0.3s}
 .addbtn:hover{background:#f0f0ec}
+
 .alat-list{display:flex;flex-direction:column;gap:5px}
-.aitem{background:#fafaf8;border:1px solid #eee;border-radius:10px;overflow:hidden}
+.aitem{background:#fafaf8;border:1px solid #eee;border-radius:10px;overflow:hidden;transition:all 0.3s}
 .aitem-top{display:grid;grid-template-columns:1fr auto auto;align-items:start;gap:6px;padding:9px 10px}
-.aname{font-weight:600;font-size:12px;color:#1a1a1a}
-.asub{color:#888;font-size:10px;margin-top:1px}
-.akwh{font-size:11px;font-weight:600;color:#1d4ed8;text-align:right;line-height:1.5;white-space:nowrap}
-.delbtn{background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;line-height:1;padding:1px 3px}
+.aname{font-weight:600;font-size:12px;color:#1a1a1a;transition:color 0.3s}
+.asub{color:#888;font-size:10px;margin-top:1px;line-height:1.4;transition:color 0.3s}
+.akwh{font-size:11px;font-weight:600;color:#1d4ed8;text-align:right;line-height:1.5;white-space:nowrap;transition:color 0.3s}
+.delbtn{background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;line-height:1;padding:1px 3px;transition:all 0.2s}
 .delbtn:hover{color:#dc2626}
-.aitem-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #eee}
-.astat{padding:7px 8px;text-align:center;border-right:1px solid #eee}
+.aitem-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #eee;transition:border-color 0.3s}
+.astat{padding:7px 8px;text-align:center;border-right:1px solid #eee;transition:border-color 0.3s}
 .astat:last-child{border-right:none}
-.astat-l{font-size:9px;color:#999;margin-bottom:2px;text-transform:uppercase;letter-spacing:.03em}
-.astat-v{font-size:12px;font-weight:600;color:#1a1a1a}
-.empty{padding:16px;text-align:center;color:#bbb;font-size:12px;border:1px dashed #e5e5e0;border-radius:10px}
+.astat-l{font-size:9px;color:#999;margin-bottom:2px;text-transform:uppercase;letter-spacing:.03em;transition:color 0.3s}
+.astat-v{font-size:12px;font-weight:600;color:#1a1a1a;transition:color 0.3s}
+.empty{padding:16px;text-align:center;color:#bbb;font-size:12px;border:1px dashed #e5e5e0;border-radius:10px;transition:all 0.3s}
 
 /* Summary */
 .sum-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}
-.scard{padding:10px 11px;border-radius:10px;border:1px solid #e5e5e0;background:#fafaf8}
+.scard{padding:10px 11px;border-radius:10px;border:1px solid #e5e5e0;background:#fafaf8;transition:all 0.3s}
 .scard.blue{background:#eff6ff;border-color:#bfdbfe}
 .scard.green{background:#edf7f1;border-color:#bbf7d0}
 .scard.amber{background:#fffbeb;border-color:#fde68a}
-.sl{font-size:10px;color:#888;margin-bottom:3px}
+.sl{font-size:10px;color:#888;margin-bottom:3px;transition:color 0.3s}
 .scard.blue .sl{color:#1d4ed8}
 .scard.green .sl{color:#15803d}
 .scard.amber .sl{color:#92400e}
-.sv{font-size:18px;font-weight:600;color:#1a1a1a}
+.sv{font-size:18px;font-weight:600;color:#1a1a1a;transition:color 0.3s}
 .scard.blue .sv{color:#1e40af}
 .scard.green .sv{color:#166534}
 .scard.amber .sv{color:#78350f}
-.ss{font-size:10px;color:#888;margin-top:1px}
+.ss{font-size:10px;color:#888;margin-top:1px;transition:color 0.3s}
 
-/* Bar */
+/* Bar & Insight */
 .bar-wrap{margin-top:4px}
-.bar-top{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:5px}
-.bar-bg{height:8px;background:#f0f0ec;border-radius:99px;overflow:hidden}
-.bar-f{height:8px;background:#2aa06a;border-radius:99px;transition:width .4s}
+.bar-top{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:5px;transition:color 0.3s}
+.bar-bg{height:8px;background:#e5e5e0;border-radius:99px;overflow:hidden;transition:background 0.3s}
+.bar-f{height:8px;background:#2aa06a;border-radius:99px;transition:width .4s, background 0.3s}
 .bar-f.warn{background:#f59e0b}
 .bar-f.danger{background:#ef4444}
-.bar-bot{font-size:11px;color:#888;text-align:right;margin-top:4px}
+.bar-bot{font-size:11px;color:#888;text-align:right;margin-top:4px;transition:color 0.3s}
+.insight{margin-top:10px;padding:10px 12px;background:#f7f7f5;border-radius:8px;font-size:12px;color:#666;line-height:1.7;transition:all 0.3s}
+.insight strong{color:#1a1a1a;transition:color 0.3s}
 
-.insight{margin-top:10px;padding:10px 12px;background:#f7f7f5;border-radius:8px;font-size:12px;color:#666;line-height:1.7}
-.insight strong{color:#1a1a1a}
 
-.divider{height:1px;background:#f0f0ec;margin:.5rem 0}
+/* =======================================
+   TEMA KHUSUS JUNI (PINK PASTEL OVERRIDES)
+   ======================================= */
+body.june { background:#ffeef2; color:#4a353d; }
+body.june h1 { color:#4a353d; }
+body.june .theme-btn { background:#ff7bac; color:#fff; border-color:#ff7bac; box-shadow:0 2px 8px rgba(255,123,172,0.3); }
+body.june .theme-btn:hover { background:#ff4d85; }
+
+body.june .card { border-color:#ffdce6; box-shadow:0 4px 14px rgba(255, 182, 193, 0.15); background:#fff; }
+body.june .card-head { color:#b37b8d; }
+
+body.june .gbtn { background:#fffafc; border-color:#ffe1eb; color:#856470; }
+body.june .gbtn:hover { background:#ffeff4; border-color:#ffccd9; }
+body.june .gbtn.on { border-color:#ff8eb5; background:#fff0f5; color:#b54570; box-shadow:0 2px 6px rgba(255,142,181,0.2); }
+body.june .gbtn.on .gname { color:#b54570; }
+body.june .gsub { color:#e06a96; }
+
+body.june .nbtn { background:#fffafc; border-color:#ffe1eb; color:#4a353d; }
+body.june .nbtn:hover { background:#ffeff4; }
+body.june .nbtn.on { border-color:#ff7bac; background:#ffecf2; color:#d13d7a; box-shadow:0 2px 6px rgba(255,123,172,0.2); }
+
+body.june .cust-row span { color:#856470; }
+body.june .cust-row input, body.june .cust-row select { background:#fffafc; border-color:#ffe1eb; color:#4a353d; }
+body.june .cust-row input:focus, body.june .cust-row select:focus { border-color:#ff7bac; background:#fff; }
+
+body.june .res-kwh { color:#d13d7a; }
+body.june .res-kwh small { color:#b37b8d; }
+body.june .ritem { background:#fff5f8; }
+body.june .rl { color:#856470; }
+body.june .rv { color:#4a353d; }
+
+body.june .alat-inputs input, body.june .alat-inputs select { background:#fffafc; border-color:#ffe1eb; color:#4a353d; }
+body.june .alat-inputs input:focus, body.june .alat-inputs select:focus { border-color:#ff7bac; background:#fff; }
+body.june .addbtn { border:none; background:#ffb6c1; color:#fff; font-weight:bold; }
+body.june .addbtn:hover { background:#ff9eb0; }
+
+body.june .aitem { background:#fffafc; border-color:#ffe1eb; }
+body.june .aname { color:#4a353d; }
+body.june .asub { color:#856470; }
+body.june .akwh { color:#d13d7a; }
+body.june .delbtn { background:#fff0f5; color:#ff7bac; padding:3px 6px; border-radius:6px; }
+body.june .delbtn:hover { background:#ff4d85; color:#fff; }
+body.june .aitem-stats, body.june .astat { border-color:#ffe1eb; }
+body.june .astat-l { color:#a88694; }
+body.june .astat-v { color:#4a353d; }
+body.june .empty { border-color:#ffdce6; background:#fffafc; color:#b37b8d; }
+
+/* Summary Cards Override */
+body.june .scard { background:#fffafc; border-color:#ffe1eb; }
+body.june .scard.blue { background:#fff0f5; border-color:#ffccd9; }
+body.june .scard.blue .sl { color:#b54570; }
+body.june .scard.blue .sv { color:#9e295a; }
+body.june .scard.green { background:#fff5f2; border-color:#ffddcc; }
+body.june .scard.green .sl { color:#c46949; }
+body.june .scard.green .sv { color:#a34d2f; }
+body.june .scard.amber { background:#fffaf0; border-color:#ffe8b5; }
+body.june .scard.amber .sl { color:#b5812a; }
+body.june .scard.amber .sv { color:#916216; }
+
+body.june .bar-top { color:#856470; }
+body.june .bar-bg { background:#ffe1eb; }
+body.june .bar-f { background:#ff8eb5; }
+body.june .bar-f.warn { background:#ffb266; }
+body.june .bar-f.danger { background:#ff6b8b; }
+body.june .bar-bot { color:#b37b8d; }
+body.june #bh { color:#d13d7a; }
+body.june .insight { background:#fff5f8; border:1px solid #ffccd9; color:#856470; }
+body.june .insight strong { color:#d13d7a; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
+<div class="header-wrap">
+  <h1>Kalkulator Listrik</h1>
+  <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌸 Mode Khusus Juni</button>
+</div>
+
 <div class="card">
-  <div class="card-head">Golongan tarif listrik</div>
+  <div class="card-head">Golongan & PPJ Daerah</div>
   <div class="card-body">
     <div class="gol-grid" id="gg"></div>
+    <div class="cust-row" style="margin-top:12px">
+      <span>PPJ Daerah:</span>
+      <select id="ppj-sel" onchange="onPPJ()">
+        <option value="0.03">3% (DKI Jakarta)</option>
+        <option value="0.05">5% (Kota/Kab Umum)</option>
+        <option value="0.10" selected>10% (Tangsel/Banten/Pusat)</option>
+        <option value="0">0% (Tanpa PPJ)</option>
+      </select>
+    </div>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-head">Nominal token</div>
+  <div class="card-head">Setup Token Listrik</div>
   <div class="card-body">
     <div class="nom-grid">
       <button class="nbtn on" onclick="setN(20000,this)">Rp 20.000</button>
@@ -119,45 +205,46 @@ h1{font-size:17px;font-weight:600;color:#1a1a1a;padding:1rem 1.1rem .5rem}
       <span>Nominal lain:</span>
       <input type="number" id="cn" placeholder="cth: 150000" min="1" oninput="onCN()">
     </div>
+    
+    <div class="res-grid" style="margin-top:16px; border-top:1px solid #e8e8e4; padding-top:12px" id="res-separator">
+      <div class="ritem" style="grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center;">
+        <div class="rl" style="margin:0; font-size:12px; font-weight:600">Didapat:</div>
+        <div class="res-kwh" id="rk" style="font-size:24px; margin:0">—<small>kWh</small></div>
+      </div>
+      <div class="ritem"><div class="rl">Potongan PPJ</div><div class="rv" id="dp">—</div></div>
+      <div class="ritem"><div class="rl">Nilai Listrik</div><div class="rv" id="db">—</div></div>
+    </div>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-head">Hasil kalkulasi</div>
+  <div class="card-head">Simulasi Beban (Load Factor)</div>
   <div class="card-body">
-    <div class="res-kwh" id="rk">—<small>kWh</small></div>
-    <div class="res-grid">
-      <div class="ritem"><div class="rl">Tarif/kWh</div><div class="rv" id="dt">—</div></div>
-      <div class="ritem"><div class="rl">PPJ Jakarta (2.4%)</div><div class="rv" id="dp">—</div></div>
-      <div class="ritem"><div class="rl">Nominal bersih</div><div class="rv" id="db">—</div></div>
-      <div class="ritem"><div class="rl">Golongan</div><div class="rv" id="dg" style="font-size:11px">—</div></div>
+    <div class="alat-inputs">
+      <input type="text" id="aNm" placeholder="Nama alat (cth: Kipas, AC)" onkeypress="handleEnter(event)">
+      <div class="alat-inputs-bot">
+        <input type="number" id="aWt" placeholder="W (Max)" min="1" onkeypress="handleEnter(event)">
+        <select id="aFk" title="Pilih tipe daya">
+          <option value="1.0">100% - Konstan (Lampu, Setrika)</option>
+          <option value="0.9" selected>90% - Motor (Kipas, Pompa)</option>
+          <option value="0.5">50% - Termostat (AC, Kulkas)</option>
+        </select>
+        <input type="number" id="aJm" placeholder="Jam" min="0.1" step="0.1" onkeypress="handleEnter(event)">
+        <button class="addbtn" onclick="addA()" title="Tambah alat">+</button>
+      </div>
     </div>
-    <div class="formula" id="fb">Pilih golongan dan nominal untuk lihat formula.</div>
-    <div class="note">* PPJ berbeda tiap daerah. Jakarta = 2.4% dari nominal token.</div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="card-head">Simulasi alat elektronik</div>
-  <div class="card-body">
-    <div class="add-row">
-      <input type="text" id="aNm" placeholder="Nama alat (cth: Kulkas)">
-      <input type="number" id="aWt" placeholder="Watt" min="1">
-      <input type="number" id="aJm" placeholder="Jam/hr" min="0.1" step="0.1">
-      <button class="addbtn" onclick="addA()" title="Tambah alat">+</button>
-    </div>
-    <div id="al"><div class="empty">Belum ada alat. Tambahkan di atas.</div></div>
+    <div id="al"><div class="empty" id="empty-txt">Belum ada alat terdaftar.</div></div>
   </div>
 </div>
 
 <div class="card" id="sw" style="display:none">
-  <div class="card-head">Ringkasan konsumsi</div>
+  <div class="card-head">Ringkasan Pemakaian</div>
   <div class="card-body">
     <div class="sum-grid">
-      <div class="scard blue"><div class="sl">Total harian</div><div class="sv" id="sh">—</div><div class="ss" id="shr">—</div></div>
-      <div class="scard green"><div class="sl">Total bulanan (30 hr)</div><div class="sv" id="sb">—</div><div class="ss" id="sbr">—</div></div>
-      <div class="scard amber"><div class="sl">Token/bulan dibutuhkan</div><div class="sv" id="stb">—</div><div class="ss" id="stbs">—</div></div>
-      <div class="scard"><div class="sl">Daya puncak (semua nyala)</div><div class="sv" id="sw2">— W</div><div class="ss">total watt terpasang</div></div>
+      <div class="scard blue"><div class="sl">Total Harian</div><div class="sv" id="sh">—</div><div class="ss" id="shr">—</div></div>
+      <div class="scard green"><div class="sl">Total Bulanan (30 hr)</div><div class="sv" id="sb">—</div><div class="ss" id="sbr">—</div></div>
+      <div class="scard amber"><div class="sl">Token / Bulan</div><div class="sv" id="stb">—</div><div class="ss" id="stbs">—</div></div>
+      <div class="scard"><div class="sl">Daya Operasional (<span id="sfk"></span>%)</div><div class="sv" id="sw_run">— W</div><div class="ss">Dari peak <span id="sw_peak">—</span> W terpasang</div></div>
     </div>
     <div class="bar-wrap">
       <div class="bar-top"><span>Satu token cukup untuk</span><span id="bh" style="font-weight:600">— hari</span></div>
@@ -171,97 +258,143 @@ h1{font-size:17px;font-weight:600;color:#1a1a1a;padding:1rem 1.1rem .5rem}
 </div>
 
 <script>
-const GOL=[
-  {id:'r1-900',n:'R-1 / 900 VA',t:1352,s:true},
-  {id:'r1-1300',n:'R-1 / 1.300 VA',t:1445},
-  {id:'r1-2200',n:'R-1 / 2.200 VA',t:1445},
-  {id:'r2',n:'R-2 / 3.500–5.500 VA',t:1700},
-  {id:'r3',n:'R-3 / 6.600 VA+',t:1700},
-  {id:'b2',n:'B-2 / 6.600VA–200kVA',t:1445},
-  {id:'b3',n:'B-3 / TM >200kVA',t:1122},
-  {id:'i3',n:'I-3 / TM >200kVA',t:1122},
-  {id:'i4',n:'I-4 / TT 30.000kVA+',t:997},
-  {id:'p1',n:'P-1 / 6.600VA–200kVA',t:1700},
-  {id:'p2',n:'P-2 / TM >200kVA',t:1533},
-  {id:'p3',n:'P-3 / PJU TR',t:1700},
-  {id:'l',n:'L / TR,TM,TT',t:1645},
-];
-const PPJ=0.024;
-let sg=null,nom=20000,alat=[];
-const f=n=>Math.round(n).toLocaleString('id-ID');
-const fr=n=>'Rp '+f(n);
-const fk=n=>n>=100000?'Rp '+(n/1000).toFixed(0)+'rb':fr(n);
-const kwht=()=>sg&&nom>0?(nom*(1-PPJ))/sg.t:0;
+// Logic Theme Toggle
+function toggleTheme() {
+  const isJune = document.body.classList.toggle('june');
+  const btn = document.getElementById('themeBtn');
+  const sep = document.getElementById('res-separator');
+  const emptyTxt = document.getElementById('empty-txt');
+  
+  if (isJune) {
+    btn.innerHTML = '✨ Mode Normal';
+    sep.style.borderTop = '1px dashed #ffdce6';
+    if(emptyTxt) emptyTxt.innerHTML = 'Belum ada alat terdaftar, yuk tambah! 🌸';
+  } else {
+    btn.innerHTML = '🌸 Mode Khusus Juni';
+    sep.style.borderTop = '1px solid #e8e8e4';
+    if(emptyTxt) emptyTxt.innerHTML = 'Belum ada alat terdaftar.';
+  }
+}
 
-const gg=document.getElementById('gg');
-GOL.forEach(g=>{
-  const b=document.createElement('button');
-  b.className='gbtn';
-  b.innerHTML=`<span class="gname">${g.n}</span>Rp ${f(g.t)}/kWh${g.s?' <span class="gsub">· subsidi</span>':''}`;
-  b.onclick=()=>{sg=g;document.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');calc();};
+// Data Listrik
+const GOL = [
+  {id:'r1-450', n:'R-1 / 450 VA', t:415, s:true},
+  {id:'r1-900s', n:'R-1 / 900 VA', t:605, s:true},
+  {id:'r1-900m', n:'R-1M / 900 VA', t:1352},
+  {id:'r1-1300', n:'R-1 / 1.300 VA', t:1444.70},
+  {id:'r1-2200', n:'R-1 / 2.200 VA', t:1444.70},
+  {id:'r2', n:'R-2 / 3.500–5.500 VA', t:1699.53},
+  {id:'b2', n:'B-2 / Bisnis', t:1444.70}
+];
+
+let sg = null, nom = 20000, ppjRate = 0.10, alat = [];
+
+const f = n => Number(n).toLocaleString('id-ID', {maximumFractionDigits: 2});
+const fr = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+const fk = n => n >= 100000 ? 'Rp ' + (n/1000).toFixed(0) + 'rb' : fr(n);
+
+const kwht = () => {
+  if(!sg || nom <= 0) return 0;
+  return (nom / (1 + ppjRate)) / sg.t;
+};
+
+const gg = document.getElementById('gg');
+GOL.forEach(g => {
+  const b = document.createElement('button');
+  b.className = 'gbtn';
+  b.innerHTML = `<span class="gname">${g.n}</span>Rp ${f(g.t)}${g.s ? ' <span class="gsub">· subsidi</span>' : ''}`;
+  b.onclick = () => {
+    sg = g;
+    document.querySelectorAll('.gbtn').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    calc(); 
+  };
   gg.appendChild(b);
 });
 
-function setN(n,btn){
-  nom=n;
-  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on'));
+function setN(n, btn){
+  nom = n;
+  document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  document.getElementById('cn').value='';
+  document.getElementById('cn').value = '';
   calc();
 }
+
 function onCN(){
-  const v=parseInt(document.getElementById('cn').value)||0;
-  if(v>0){nom=v;document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on'));calc();}
+  const v = parseInt(document.getElementById('cn').value) || 0;
+  if(v > 0) {
+    nom = v;
+    document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('on'));
+    calc();
+  }
 }
+
+function onPPJ(){ ppjRate = parseFloat(document.getElementById('ppj-sel').value); calc(); }
 
 function calc(){
-  if(!sg||nom<=0)return;
-  const ppj=nom*PPJ,br=nom-ppj,kw=br/sg.t;
-  document.getElementById('rk').innerHTML=kw.toFixed(2)+'<small>kWh</small>';
-  document.getElementById('dt').textContent='Rp '+f(sg.t);
-  document.getElementById('dp').textContent=fr(ppj);
-  document.getElementById('db').textContent=fr(br);
-  document.getElementById('dg').textContent=sg.n;
-  document.getElementById('fb').innerHTML=`<strong>Formula:</strong> (${fr(nom)} − ${fr(ppj)} PPJ) ÷ Rp ${f(sg.t)} = <strong>${kw.toFixed(2)} kWh</strong>`;
-  renderSum();
+  if(!sg || nom <= 0) return;
+  const br = nom / (1 + ppjRate); 
+  const ppjVal = nom - br; 
+  const kw = br / sg.t;
+
+  document.getElementById('rk').innerHTML = kw.toFixed(2) + '<small>kWh</small>';
+  document.getElementById('dp').textContent = fr(ppjVal);
+  document.getElementById('db').textContent = fr(br);
+  render(); 
 }
+
+function handleEnter(e) { if (e.key === 'Enter') addA(); }
 
 function addA(){
-  const nm=document.getElementById('aNm').value.trim();
-  const wt=parseFloat(document.getElementById('aWt').value)||0;
-  const jm=parseFloat(document.getElementById('aJm').value)||0;
-  if(!nm||wt<=0||jm<=0)return;
-  alat.push({id:Date.now(),nm,wt,jm});
-  document.getElementById('aNm').value='';
-  document.getElementById('aWt').value='';
-  document.getElementById('aJm').value='';
+  const nm = document.getElementById('aNm').value.trim();
+  const wt = parseFloat(document.getElementById('aWt').value) || 0;
+  const lf = parseFloat(document.getElementById('aFk').value) || 1; 
+  const jm = parseFloat(document.getElementById('aJm').value) || 0;
+  
+  if(!nm || wt <= 0 || jm <= 0) return;
+  
+  alat.push({id: Date.now(), nm, wt, lf, jm});
+  document.getElementById('aNm').value = '';
+  document.getElementById('aWt').value = '';
+  document.getElementById('aJm').value = '';
+  document.getElementById('aNm').focus();
   render();
 }
-function delA(id){alat=alat.filter(a=>a.id!==id);render();}
+
+function delA(id){ alat = alat.filter(a => a.id !== id); render(); }
 
 function render(){
-  const wrap=document.getElementById('al');
+  const wrap = document.getElementById('al');
   if(!alat.length){
-    wrap.innerHTML='<div class="empty">Belum ada alat. Tambahkan di atas.</div>';
-    document.getElementById('sw').style.display='none';
+    const isJune = document.body.classList.contains('june');
+    wrap.innerHTML = `<div class="empty" id="empty-txt">${isJune ? 'Belum ada alat terdaftar, yuk tambah! 🌸' : 'Belum ada alat terdaftar.'}</div>`;
+    document.getElementById('sw').style.display = 'none';
     return;
   }
-  wrap.innerHTML='';
-  alat.forEach(a=>{
-    const kh=a.wt/1000*a.jm,kb=kh*30;
-    const rb=sg?kb*sg.t:0;
-    const el=document.createElement('div');
-    el.className='aitem';
-    el.innerHTML=`
+  
+  wrap.innerHTML = '';
+  alat.forEach(a => {
+    const realWt = a.wt * a.lf;
+    const kh = (realWt / 1000) * a.jm;
+    const kb = kh * 30;
+    const rb = sg ? kb * sg.t : 0;
+    
+    const el = document.createElement('div');
+    el.className = 'aitem';
+    const isJune = document.body.classList.contains('june');
+    el.innerHTML = `
       <div class="aitem-top">
-        <div><div class="aname">${a.nm}</div><div class="asub">${a.wt}W × ${a.jm} jam/hari</div></div>
+        <div>
+          <div class="aname">${a.nm}</div>
+          <div class="asub">Peak: ${a.wt}W | <strong>Run: ${Math.round(realWt)}W (${(a.lf*100).toFixed(0)}%)</strong><br>Durasi: ${a.jm} jam/hari</div>
+        </div>
         <div class="akwh">${kh.toFixed(3)} kWh/hr<br>${kb.toFixed(2)} kWh/bln</div>
-        <button class="delbtn" onclick="delA(${a.id})" title="Hapus">×</button>
+        <button class="delbtn" onclick="delA(${a.id})" title="Hapus">${isJune ? '✕' : '×'}</button>
       </div>
       <div class="aitem-stats">
         <div class="astat"><div class="astat-l">kWh/hari</div><div class="astat-v">${kh.toFixed(3)}</div></div>
         <div class="astat"><div class="astat-l">kWh/bulan</div><div class="astat-v">${kb.toFixed(2)}</div></div>
-        <div class="astat"><div class="astat-l">Biaya/bulan</div><div class="astat-v">${sg?fk(rb):'—'}</div></div>
+        <div class="astat"><div class="astat-l">Biaya/bulan</div><div class="astat-v">${sg ? fk(rb) : '—'}</div></div>
       </div>`;
     wrap.appendChild(el);
   });
@@ -269,31 +402,53 @@ function render(){
 }
 
 function renderSum(){
-  if(!alat.length)return;
-  document.getElementById('sw').style.display='block';
-  let tw=0,tkh=0;
-  alat.forEach(a=>{tw+=a.wt;tkh+=a.wt/1000*a.jm;});
-  const tkb=tkh*30,kt=kwht(),tr=sg?sg.t:0;
-  document.getElementById('sh').textContent=tkh.toFixed(3)+' kWh';
-  document.getElementById('shr').textContent=tr?fr(tr*tkh)+'/hari':'Pilih golongan';
-  document.getElementById('sb').textContent=tkb.toFixed(2)+' kWh';
-  document.getElementById('sbr').textContent=tr?fr(tr*tkb)+'/bulan':'—';
-  document.getElementById('sw2').textContent=f(tw)+' W';
-  if(kt>0&&tkb>0){
-    const perBulan=tkb/kt,biayaBulan=perBulan*nom,hari=kt/tkh;
-    document.getElementById('stb').textContent=perBulan.toFixed(1)+'× token';
-    document.getElementById('stbs').textContent=fr(biayaBulan)+'/bulan';
-    document.getElementById('bh').textContent=hari.toFixed(1)+' hari';
-    const bf=document.getElementById('bf');
-    bf.style.width=Math.min(100,(1/hari*30)*100)+'%';
-    bf.className='bar-f'+(hari<10?' danger':hari<20?' warn':'');
-    document.getElementById('bs').textContent=`Token Rp ${f(nom)} → habis dalam ${hari.toFixed(1)} hari`;
-    const tbn=Math.ceil(perBulan);
-    document.getElementById('tn').innerHTML=`Dengan pola ini, butuh <strong>${tbn}× token Rp ${f(nom)}</strong> per bulan — setara <strong>${fr(tbn*nom)}/bulan</strong> atau rata-rata <strong>${fr(Math.round(tbn*nom/30))}/hari</strong>.`;
+  if(!alat.length) return;
+  document.getElementById('sw').style.display = 'block';
+  
+  let twPeak = 0, twRun = 0, tkh = 0;
+  alat.forEach(a => {
+    twPeak += a.wt;
+    twRun += a.wt * a.lf;
+    tkh += ((a.wt * a.lf) / 1000) * a.jm;
+  });
+  
+  const tkb = tkh * 30;
+  const kt = kwht();
+  const tr = sg ? sg.t : 0;
+  const avgLf = twPeak > 0 ? (twRun / twPeak) * 100 : 0;
+  
+  document.getElementById('sh').textContent = tkh.toFixed(3) + ' kWh';
+  document.getElementById('shr').textContent = tr ? fr(tr * tkh) + '/hari' : 'Pilih golongan';
+  document.getElementById('sb').textContent = tkb.toFixed(2) + ' kWh';
+  document.getElementById('sbr').textContent = tr ? fr(tr * tkb) + '/bulan' : '—';
+  
+  document.getElementById('sw_run').textContent = Math.round(twRun) + ' W';
+  document.getElementById('sw_peak').textContent = f(twPeak);
+  document.getElementById('sfk').textContent = avgLf.toFixed(0);
+  
+  if(kt > 0 && tkb > 0){
+    const perBulan = tkb / kt;
+    const biayaBulan = perBulan * nom;
+    const hari = kt / tkh;
+    
+    document.getElementById('stb').textContent = perBulan.toFixed(1) + '× token';
+    document.getElementById('stbs').textContent = fr(biayaBulan) + '/bulan';
+    document.getElementById('bh').textContent = hari.toFixed(1) + ' hari';
+    
+    const bf = document.getElementById('bf');
+    const percent = (hari / 30) * 100;
+    bf.style.width = Math.min(100, percent) + '%';
+    bf.className = 'bar-f' + (hari < 10 ? ' danger' : hari < 20 ? ' warn' : '');
+    
+    const isJune = document.body.classList.contains('june');
+    document.getElementById('bs').textContent = `${isJune ? '✨ ' : ''}Token Rp ${f(nom)} habis dalam ${hari.toFixed(1)} hari`;
+    
+    const tbn = Math.ceil(perBulan);
+    document.getElementById('tn').innerHTML = `Dengan rata-rata beban <strong>${avgLf.toFixed(0)}%</strong>, butuh <strong>${tbn}× token Rp ${f(nom)}</strong> per bulan — setara pengeluaran <strong>${fr(tbn * nom)}/bulan</strong>.`;
   } else {
-    document.getElementById('stb').textContent='—';
-    document.getElementById('stbs').textContent='Pilih golongan & nominal';
-    document.getElementById('tn').textContent='Pilih golongan tarif dan nominal token untuk lihat estimasi bulanan.';
+    document.getElementById('stb').textContent = '—';
+    document.getElementById('stbs').textContent = 'Pilih golongan & nominal';
+    document.getElementById('tn').textContent = 'Pilih golongan tarif dan nominal token untuk lihat estimasi bulanan.';
   }
 }
 
