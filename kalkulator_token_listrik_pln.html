@@ -1,0 +1,269 @@
+
+<h2 class="sr-only">Kalkulator token listrik PLN — hitung kWh dari nominal token berdasarkan golongan dan tarif resmi Triwulan II 2026</h2>
+<style>
+  .calc-wrap{padding:1rem 0;font-family:var(--font-sans)}
+  .section-label{font-size:12px;color:var(--color-text-secondary);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .golongan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:1.5rem}
+  .gol-btn{padding:10px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;text-align:left;transition:all .15s;font-size:12px;color:var(--color-text-secondary);line-height:1.35}
+  .gol-btn.active{border-color:#1D9E75;background:#E1F5EE;color:#085041}
+  .gol-btn:hover:not(.active){background:var(--color-background-secondary)}
+  .gol-name{font-weight:500;font-size:13px;color:var(--color-text-primary);display:block;margin-bottom:2px}
+  .gol-btn.active .gol-name{color:#085041}
+  .nominal-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:1rem}
+  .nom-btn{padding:10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;font-size:14px;font-weight:500;color:var(--color-text-primary);transition:all .15s}
+  .nom-btn.active{border-color:#378ADD;background:#E6F1FB;color:#0C447C}
+  .nom-btn:hover:not(.active){background:var(--color-background-secondary)}
+  .custom-row{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem}
+  .custom-row span{font-size:14px;color:var(--color-text-secondary);white-space:nowrap}
+  .custom-row input{flex:1;padding:9px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:14px}
+  .result-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+  .result-kwh{font-size:36px;font-weight:500;color:var(--color-text-primary);line-height:1;margin-bottom:4px}
+  .result-kwh span{font-size:16px;font-weight:400;color:var(--color-text-secondary);margin-left:4px}
+  .result-detail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:1rem}
+  .detail-item{background:var(--color-background-primary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary)}
+  .detail-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+  .detail-val{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+  .formula-box{font-size:12px;color:var(--color-text-secondary);border-left:2px solid var(--color-border-secondary);padding:8px 12px;margin-bottom:1.5rem;line-height:1.7;background:var(--color-background-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0}
+  .formula-box strong{color:var(--color-text-primary)}
+  .alat-section{margin-top:1.5rem}
+  .alat-add-row{display:flex;gap:8px;margin-bottom:1rem}
+  .alat-add-row input{flex:1;padding:8px 10px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+  .alat-add-row select{padding:8px 10px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+  .btn-add{padding:8px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;font-size:13px;font-weight:500;color:var(--color-text-primary);white-space:nowrap}
+  .btn-add:hover{background:var(--color-background-secondary)}
+  .alat-list{display:flex;flex-direction:column;gap:6px}
+  .alat-item{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;padding:10px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)}
+  .alat-info{font-size:13px}
+  .alat-name{font-weight:500;color:var(--color-text-primary)}
+  .alat-sub{color:var(--color-text-secondary);font-size:11px;margin-top:1px}
+  .alat-kwh{font-size:13px;font-weight:500;color:#185FA5;white-space:nowrap}
+  .btn-del{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);padding:2px 4px;font-size:16px;line-height:1}
+  .btn-del:hover{color:#A32D2D}
+  .total-alat{margin-top:12px;padding:12px;background:#E6F1FB;border-radius:var(--border-radius-md);display:flex;justify-content:space-between;align-items:center}
+  .total-alat .label{font-size:13px;color:#185FA5}
+  .total-alat .val{font-size:16px;font-weight:500;color:#0C447C}
+  .sisa-bar-wrap{margin-top:12px}
+  .sisa-label{display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+  .bar-bg{height:8px;background:var(--color-background-secondary);border-radius:99px;overflow:hidden}
+  .bar-fill{height:8px;background:#1D9E75;border-radius:99px;transition:width .3s}
+  .bar-fill.warn{background:#EF9F27}
+  .bar-fill.danger{background:#E24B4A}
+  .sisa-val{margin-top:6px;font-size:13px;color:var(--color-text-secondary);text-align:right}
+  .divider{height:0.5px;background:var(--color-border-tertiary);margin:1.5rem 0}
+  .ppj-note{font-size:11px;color:var(--color-text-secondary);margin-top:8px}
+</style>
+
+<div class="calc-wrap">
+
+  <div class="section-label">Golongan tarif</div>
+  <div class="golongan-grid" id="golGrid"></div>
+
+  <div class="section-label">Nominal token (Rp)</div>
+  <div class="nominal-row">
+    <button class="nom-btn active" onclick="setNominal(20000,this)">Rp 20.000</button>
+    <button class="nom-btn" onclick="setNominal(50000,this)">Rp 50.000</button>
+    <button class="nom-btn" onclick="setNominal(100000,this)">Rp 100.000</button>
+    <button class="nom-btn" onclick="setNominal(200000,this)">Rp 200.000</button>
+  </div>
+  <div class="custom-row">
+    <span>Nominal lain:</span>
+    <input type="number" id="customNominal" placeholder="Contoh: 150000" min="1" oninput="onCustomInput()">
+  </div>
+
+  <div class="result-card">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:6px">Estimasi kWh diperoleh</div>
+    <div class="result-kwh" id="resultKwh">— <span>kWh</span></div>
+    <div class="result-detail">
+      <div class="detail-item">
+        <div class="detail-label">Tarif/kWh</div>
+        <div class="detail-val" id="detTarif">—</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">PPJ Jakarta (2.4%)</div>
+        <div class="detail-val" id="detPpj">—</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Nominal bersih</div>
+        <div class="detail-val" id="detBersih">—</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Golongan</div>
+        <div class="detail-val" id="detGol" style="font-size:12px">—</div>
+      </div>
+    </div>
+    <div class="ppj-note">* PPJ daerah lain berbeda. Jakarta = 2.4% dari nominal token.</div>
+  </div>
+
+  <div class="formula-box" id="formulaBox">Pilih golongan dan nominal untuk lihat formula.</div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">Simulasi alat elektronik</div>
+  <div class="alat-add-row">
+    <input type="text" id="alatNama" placeholder="Nama alat (misal: Kulkas)">
+    <input type="number" id="alatWatt" placeholder="Watt" min="1" style="width:70px;flex:none">
+    <input type="number" id="alatJam" placeholder="Jam/hr" min="0.1" step="0.1" style="width:65px;flex:none">
+    <button class="btn-add" onclick="tambahAlat()">+ Tambah</button>
+  </div>
+  <div id="alatList" class="alat-list"></div>
+  <div id="totalAlatWrap" style="display:none">
+    <div class="total-alat">
+      <span class="label">Total konsumsi/hari</span>
+      <span class="val" id="totalKwhHari">— kWh</span>
+    </div>
+    <div class="sisa-bar-wrap">
+      <div class="sisa-label">
+        <span>Pemakaian dari token ini</span>
+        <span id="sisaHari">— hari</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+      <div class="sisa-val" id="sisaKwhVal"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GOLONGAN = [
+  {id:'r1-900', nama:'R-1 / 900 VA', tarif:1352, subsidi:true},
+  {id:'r1-1300', nama:'R-1 / 1.300 VA', tarif:1445, subsidi:false},
+  {id:'r1-2200', nama:'R-1 / 2.200 VA', tarif:1445, subsidi:false},
+  {id:'r2', nama:'R-2 / 3.500–5.500 VA', tarif:1700, subsidi:false},
+  {id:'r3', nama:'R-3 / 6.600 VA+', tarif:1700, subsidi:false},
+  {id:'b2', nama:'B-2 / 6.600VA–200kVA', tarif:1445, subsidi:false},
+  {id:'b3', nama:'B-3 / TM >200kVA', tarif:1122, subsidi:false},
+  {id:'i3', nama:'I-3 / TM >200kVA', tarif:1122, subsidi:false},
+  {id:'i4', nama:'I-4 / TT 30.000kVA+', tarif:997, subsidi:false},
+  {id:'p1', nama:'P-1 / 6.600VA–200kVA', tarif:1700, subsidi:false},
+  {id:'p2', nama:'P-2 / TM >200kVA', tarif:1533, subsidi:false},
+  {id:'p3', nama:'P-3 / PJU TR', tarif:1700, subsidi:false},
+  {id:'l', nama:'L / TR,TM,TT', tarif:1645, subsidi:false},
+];
+const PPJ_RATE = 0.024;
+let selGol = null;
+let nominal = 20000;
+let alatList = [];
+
+function fmt(n){return n.toLocaleString('id-ID')}
+function fmtRp(n){return 'Rp '+fmt(Math.round(n))}
+
+const grid = document.getElementById('golGrid');
+GOLONGAN.forEach(g=>{
+  const btn = document.createElement('button');
+  btn.className='gol-btn';
+  btn.innerHTML=`<span class="gol-name">${g.nama}</span>Rp ${fmt(g.tarif)}/kWh${g.subsidi?' · <span style="color:#1D9E75;font-size:11px">subsidi</span>':''}`;
+  btn.onclick=()=>selectGol(g, btn);
+  btn.dataset.id=g.id;
+  grid.appendChild(btn);
+});
+
+function selectGol(g, btn){
+  selGol=g;
+  document.querySelectorAll('.gol-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  hitung();
+}
+
+function setNominal(n, btn){
+  nominal=n;
+  document.querySelectorAll('.nom-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('customNominal').value='';
+  hitung();
+}
+
+function onCustomInput(){
+  const v=parseInt(document.getElementById('customNominal').value)||0;
+  if(v>0){
+    nominal=v;
+    document.querySelectorAll('.nom-btn').forEach(b=>b.classList.remove('active'));
+    hitung();
+  }
+}
+
+function hitung(){
+  if(!selGol||nominal<=0){return;}
+  const ppj=nominal*PPJ_RATE;
+  const bersih=nominal-ppj;
+  const kwh=bersih/selGol.tarif;
+  document.getElementById('resultKwh').innerHTML=kwh.toFixed(2)+'<span>kWh</span>';
+  document.getElementById('detTarif').textContent='Rp '+fmt(selGol.tarif);
+  document.getElementById('detPpj').textContent=fmtRp(ppj);
+  document.getElementById('detBersih').textContent=fmtRp(bersih);
+  document.getElementById('detGol').textContent=selGol.nama;
+  document.getElementById('formulaBox').innerHTML=
+    `<strong>Formula:</strong> (${fmtRp(nominal)} − ${fmtRp(ppj)} PPJ) ÷ Rp ${fmt(selGol.tarif)} = <strong>${kwh.toFixed(2)} kWh</strong>`;
+  updateSisa(kwh);
+}
+
+function tambahAlat(){
+  const nama=document.getElementById('alatNama').value.trim();
+  const watt=parseFloat(document.getElementById('alatWatt').value)||0;
+  const jam=parseFloat(document.getElementById('alatJam').value)||0;
+  if(!nama||watt<=0||jam<=0)return;
+  alatList.push({id:Date.now(), nama, watt, jam});
+  document.getElementById('alatNama').value='';
+  document.getElementById('alatWatt').value='';
+  document.getElementById('alatJam').value='';
+  renderAlat();
+}
+
+function hapusAlat(id){
+  alatList=alatList.filter(a=>a.id!==id);
+  renderAlat();
+}
+
+function renderAlat(){
+  const wrap=document.getElementById('alatList');
+  wrap.innerHTML='';
+  let totalKwh=0;
+  alatList.forEach(a=>{
+    const kwh=a.watt/1000*a.jam;
+    totalKwh+=kwh;
+    const item=document.createElement('div');
+    item.className='alat-item';
+    item.innerHTML=`<div class="alat-info"><div class="alat-name">${a.nama}</div><div class="alat-sub">${a.watt}W × ${a.jam} jam/hari</div></div><div class="alat-kwh">${kwh.toFixed(3)} kWh/hr</div><button class="btn-del" onclick="hapusAlat(${a.id})" aria-label="Hapus"><i class="ti ti-x" aria-hidden="true"></i></button>`;
+    wrap.appendChild(item);
+  });
+  const twrap=document.getElementById('totalAlatWrap');
+  if(alatList.length>0){
+    twrap.style.display='block';
+    document.getElementById('totalKwhHari').textContent=totalKwh.toFixed(3)+' kWh/hari';
+    const kwhToken = getKwhToken();
+    if(kwhToken>0&&totalKwh>0){
+      const hari=kwhToken/totalKwh;
+      document.getElementById('sisaHari').textContent=hari.toFixed(1)+' hari';
+      const pct=Math.min(100,(totalKwh/kwhToken)*100);
+      const bar=document.getElementById('barFill');
+      bar.style.width=pct+'%';
+      bar.className='bar-fill'+(pct>80?' danger':pct>50?' warn':'');
+      document.getElementById('sisaKwhVal').textContent=`Token ${fmt(nominal)} → cukup ${hari.toFixed(1)} hari dengan pola pemakaian ini`;
+    } else {
+      document.getElementById('sisaHari').textContent='Pilih token dulu';
+      document.getElementById('sisaKwhVal').textContent='';
+    }
+  } else {
+    twrap.style.display='none';
+  }
+}
+
+function getKwhToken(){
+  if(!selGol||nominal<=0)return 0;
+  return (nominal*(1-PPJ_RATE))/selGol.tarif;
+}
+
+function updateSisa(kwh){
+  let totalKwh=0;
+  alatList.forEach(a=>totalKwh+=a.watt/1000*a.jam);
+  if(alatList.length>0&&totalKwh>0){
+    const hari=kwh/totalKwh;
+    document.getElementById('sisaHari').textContent=hari.toFixed(1)+' hari';
+    const pct=Math.min(100,(totalKwh/kwh)*100);
+    const bar=document.getElementById('barFill');
+    bar.style.width=pct+'%';
+    bar.className='bar-fill'+(pct>80?' danger':pct>50?' warn':'');
+    document.getElementById('sisaKwhVal').textContent=`Token ${fmt(nominal)} → cukup ${hari.toFixed(1)} hari`;
+  }
+}
+
+document.querySelector('.gol-btn').click();
+</script>
